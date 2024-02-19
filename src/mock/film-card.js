@@ -31,14 +31,80 @@ const filmsDescriptionsItems = [
   `In rutrum ac purus sit amettempus.`,
 ];
 
+const filmsDirectorItems = [
+  `Anthony Mann`,
+  `Capitan Kook`,
+  `Mantara Kupara`,
+  `Ali Vali`,
+  `Etoo Pisatel`,
+  `Kortni Corks`,
+];
+
+const filmsWritersItems = [
+  `Anne Wigton`,
+  `Heinz Herald`,
+  `Richard Weil`,
+  `Helena Hyus`,
+  `Firmino Perera`,
+  `Xesso Faster`,
+];
+
+const filmsActorsItems = [
+  `Erich von Stroheim`,
+  `Mary Beth Hughes`,
+  `Dan Duryea`,
+  `Van Helsing`,
+  `Toni Stark`,
+  `Leo Dicaprio`,
+];
+
+const filmsCountryItems = [
+  `USA`,
+  `Mexico`,
+  `UK`,
+  `France`,
+  `Italy`,
+  `Germany`,
+];
+
+const filmsCommentEmojiItems = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
+
+const filmsCommentTextItems = [
+  `Interesting setting and a good cast`,
+  `Booooooooooring`,
+  `Very very old. Meh`,
+  `Almost two hours? Seriously?`,
+  `Bugagag bazzinga`,
+  `My personal teste`,
+];
+
+const filmsCommentAuthorItems = [
+  `Tim Macoveev`,
+  `John Doe`,
+  `Grisha Vachovski`,
+  `Kurtman Kosso`,
+];
+
+const filmsCommentDayItems = [
+  `2019/12/31 23:59`,
+  `2 days ago`,
+  `Today`,
+  `4 weeks ago`,
+];
+
 
 const generateRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegeNumber(0, array.length);
+  const randomIndex = getRandomIntegerNumber(0, array.length);
 
   return array[randomIndex];
 };
 
-const getRandomIntegeNumber = (min, max) => {
+const getRandomIntegerNumber = (min, max) => {
   return min + Math.floor(Math.random() * (max - min));
 };
 
@@ -53,14 +119,21 @@ const generateFilm = () => {
   const titleAndPoster = generateRandomArrayItem(filmsTitleItems);
   return {
     title: titleAndPoster,
-    rating: getRandomIntegeNumber(3, 10),
-    year: getRandomIntegeNumber(3, 10),
-    hour: getRandomIntegeNumber(0, 3),
-    minutes: getRandomIntegeNumber(0, 60),
-    genre: generateRandomArrayItem(filmsGenreItems),
+    rating: getRandomIntegerNumber(3, 10) + (getRandomIntegerNumber(1, 9) / 10),
+    year: getRandomIntegerNumber(1920, 1970),
+    hour: getRandomIntegerNumber(1, 3),
+    minutes: getRandomIntegerNumber(30, 45),
+    genre: getRandomItemFromArray(filmsGenreItems, getRandomIntegerNumber(3, 3)),
     poster: titleAndPoster,
-    description: getRandomItemFromArray(filmsDescriptionsItems, getRandomIntegeNumber(1, 5)).join(` `),
-    comments: getRandomIntegeNumber(0, 5),
+    description: getRandomItemFromArray(filmsDescriptionsItems, getRandomIntegerNumber(1, 5)).join(` `),
+    comments: getRandomIntegerNumber(0, 5),
+    director: generateRandomArrayItem(filmsDirectorItems),
+    writers: getRandomItemFromArray(filmsWritersItems, getRandomIntegerNumber(1, 3)).join(`, `),
+    actors: getRandomItemFromArray(filmsActorsItems, getRandomIntegerNumber(3, 3)).join(`, `),
+    commentEmoji: generateRandomArrayItem(filmsCommentEmojiItems),
+    commentText: generateRandomArrayItem(filmsCommentTextItems),
+    commentAuthor: generateRandomArrayItem(filmsCommentAuthorItems),
+    commentDay: generateRandomArrayItem(filmsCommentDayItems),
   };
 };
 
@@ -68,4 +141,8 @@ const generateFilms = (count) => {
   return new Array(count).fill(``).map(generateFilm);
 };
 
-export {generateFilms};
+const generateComments = (count) => {
+  return new Array(count).fill(``).map(generateFilm);
+};
+
+export {generateFilms, generateComments};
