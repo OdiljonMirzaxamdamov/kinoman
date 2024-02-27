@@ -58,15 +58,6 @@ const filmsActorsItems = [
   `Leo Dicaprio`,
 ];
 
-const filmsCountryItems = [
-  `USA`,
-  `Mexico`,
-  `UK`,
-  `France`,
-  `Italy`,
-  `Germany`,
-];
-
 const filmsCommentEmojiItems = [
   `smile`,
   `sleeping`,

@@ -1,15 +1,15 @@
 import {createElement} from "../utils.js";
 
-const createFooterStatisticsValueTemplate = () =>
-  `<p>130 291 movies inside</p>`;
+const createFilmListContainerTemplate = () =>
+  `<div class="films-list__container"></div>`;
 
-export default class FooterStatisticsValue {
+export default class FilmsListContainer {
   constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFooterStatisticsValueTemplate();
+    return createFilmListContainerTemplate();
   }
 
   getElement() {
@@ -24,8 +24,3 @@ export default class FooterStatisticsValue {
     this._element = null;
   }
 }
-
-
-// export const createFooterStatisticsValueTemplate = () => {
-//   return `<p>130 291 movies inside</p>`;
-// };

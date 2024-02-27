@@ -1,20 +1,48 @@
-export const createFilmsTemplate = () => {
-  return `<section class="films">
+import {createElement} from "../utils.js";
 
-            <section class="films-list">
-              <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
-              <div class="films-list__container"></div>
-            </section>
+const createFilmsTemplate = () =>
+  `<section class="films"></section>`;
 
-            <section class="films-list--extra">
-              <h2 class="films-list__title">Top rated</h2>
-              <div class="films-list__container"></div>
-            </section>
+export default class Films {
+  constructor() {
+    this._element = null;
+  }
 
-            <section class="films-list--extra">
-              <h2 class="films-list__title">Most commented</h2>
-              <div class="films-list__container"></div>
-            </section>
+  getTemplate() {
+    return createFilmsTemplate();
+  }
 
-         </section>`;
-};
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
+
+// export const createFilmsTemplate = () => {
+//   return `<section class="films">
+//
+//             <section class="films-list">
+//               <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
+//               <div class="films-list__container"></div>
+//             </section>
+//
+//             <section class="films-list--extra">
+//               <h2 class="films-list__title">Top rated</h2>
+//               <div class="films-list__container"></div>
+//             </section>
+//
+//             <section class="films-list--extra">
+//               <h2 class="films-list__title">Most commented</h2>
+//               <div class="films-list__container"></div>
+//             </section>
+//
+//          </section>`;
+// };

@@ -1,4 +1,7 @@
-export const createFilmDetailsTemplate = (filmCardDetails) => {
+import {createElement} from "../utils.js";
+
+
+const createFilmDetailsTemplate = (filmCard) => {
   const {
     title,
     rating,
@@ -12,7 +15,8 @@ export const createFilmDetailsTemplate = (filmCardDetails) => {
     writers,
     actors,
     country,
-  } = filmCardDetails;
+    comments
+  } = filmCard;
 
   return `<section class="film-details">
           <form class="film-details__inner" action="" method="get">
@@ -91,13 +95,13 @@ export const createFilmDetailsTemplate = (filmCardDetails) => {
 
             <div class="form-details__bottom-container">
               <section class="film-details__comments-wrap">
-                <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">4</span></h3>
+                <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${comments}</span></h3>
 
-                <ul class="film-details__comments-list">
+<!--                <ul class="film-details__comments-list">-->
 
                       <!-- Комментарии -->
 
-                </ul>
+<!--                </ul>-->
                 <div class="film-details__new-comment">
                   <div for="add-emoji" class="film-details__add-emoji-label"></div>
 
@@ -132,3 +136,84 @@ export const createFilmDetailsTemplate = (filmCardDetails) => {
           </form>
         </section>`;
 };
+
+
+// export default class FilmDetails {
+//   constructor(filmCard) {
+//     this._filmCardDetails = filmCard;
+//     this._element = null;
+//   }
+//
+//   getTemplate() {
+//     return createFilmDetailsTemplate(this._filmCardDetails);
+//   }
+//
+//   getElement() {
+//     if (!this._element) {
+//       this._element = createElement(this.getTemplate());
+//     }
+//
+//     return this._element;
+//   }
+//
+//   removeElement() {
+//     this._element = null;
+//   }
+//
+//   setCloseButtonClickHandler(handler) {
+//     this.getElement()
+//       .querySelector(`.film-details__close-btn`)
+//       .addEventListener(`click`, handler);
+//   }
+// }
+
+export default class FilmDetails {
+  constructor(filmCard) {
+    this._filmCardDetails = filmCard;
+    this._element = null;
+    this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
+    this._handleDocumentKeyDown = this._handleDocumentKeyDown.bind(this);
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._filmCardDetails);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    if (this._element) {
+      this._element.remove();
+      this._element = null;
+      document.removeEventListener(`keydown`, this._handleDocumentKeyDown);
+    }
+  }
+
+  setCloseButtonClickHandler(handler) {
+    this._closeButtonClickHandler = handler;
+    const closeButton = this.getElement().querySelector(`.film-details__close-btn`);
+    closeButton.addEventListener(`click`, this._handleCloseButtonClick);
+    document.addEventListener(`keydown`, this._handleDocumentKeyDown);
+  }
+
+  _handleCloseButtonClick() {
+    if (this._closeButtonClickHandler) {
+      this._closeButtonClickHandler();
+    }
+    this.removeElement();
+  }
+
+  _handleDocumentKeyDown(evt) {
+    if (evt.key === `Escape`) {
+      this._handleCloseButtonClick();
+    }
+  }
+}
+
+
