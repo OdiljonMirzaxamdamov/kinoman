@@ -11,6 +11,7 @@ import Sort from "./components/sort";
 import FilmsListContainer from "./components/films-list-container";
 import FilmsList from "./components/films-list";
 import FilmsListExtra from "./components/films-list-extra";
+import NoData from "./components/no-data";
 
 
 import {generateNavigations, navigationActive} from "./mock/navigation";
@@ -18,7 +19,7 @@ import {generateFilms, generateComments} from "./mock/film-card";
 import {render, RenderPosition} from "./utils.js";
 
 
-const FILM_COUNT = 15;
+const FILM_COUNT = 0;
 const EXTRA_FILM_COUNT = 2;
 const SHOWING_FILM_COUNT_ON_START = 5;
 const SHOWING_FILM_COUNT_BY_BUTTON = 5;
@@ -32,21 +33,32 @@ const navigations = generateNavigations();
 
 const siteProfilElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
+const siteFooterElement = document.querySelector(`.footer`);
+const footerElement = siteFooterElement.querySelector(`.footer__statistics`);
 
 
 const filmsMainBlock = new Films();
 const filmsList = new FilmsList();
 
-// if (films.length === 0) {
-//   render(filmsMainBlock.getElement(), filmsListExtraMostCommented.getElement());
-// }
+
+render(siteProfilElement, new Profile().getElement());
+
+
+// ставим проверку если филмы отсутсвуют, то отобразиться NO DATA окно
+if (films.length === 0) {
+  render(siteMainElement, new NoData().getElementNoDataNavigation());
+  render(siteMainElement, new NoData().getElementNoDataSort());
+  render(siteMainElement, new NoData().getElementNoDataFilms());
+  render(footerElement, new NoData().getElementNoDataFooter());
+
+  throw new Error(`There are no movies in our database`);
+}
 
 
 const filmsListExtraTopRated = new FilmsListExtra(`TOP RATED`);
 const filmsListExtraMostCommented = new FilmsListExtra(`MOST COMMENTED`);
 
 
-render(siteProfilElement, new Profile().getElement());
 render(siteMainElement, new Navigation(navigations).getElement());
 const navigation = document.querySelector(`.main-navigation__items`);
 navigationActive(navigation);
@@ -126,9 +138,7 @@ renderExtraFilmsList(filmsListExtraMostCommented, sortedMostCommentedFilms);
 
 
 // Футер - счётчик количества фильмов сайта
-const siteFooterElement = document.querySelector(`.footer`);
-const footerElement = siteFooterElement.querySelector(`.footer__statistics`);
-render(footerElement, new FooterStatisticsValue().getElement(), RenderPosition.BEFOREEND);
+render(footerElement, new FooterStatisticsValue().getElement());
 
 
 // // Функции компонентов разметки страницы (контейнер элемент и вёрстка)
