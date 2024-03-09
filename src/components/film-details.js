@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component";
 
 
 const createFilmDetailsTemplate = (filmCard) => {
@@ -138,39 +138,10 @@ const createFilmDetailsTemplate = (filmCard) => {
 };
 
 
-// export default class FilmDetails {
-//   constructor(filmCard) {
-//     this._filmCardDetails = filmCard;
-//     this._element = null;
-//   }
-//
-//   getTemplate() {
-//     return createFilmDetailsTemplate(this._filmCardDetails);
-//   }
-//
-//   getElement() {
-//     if (!this._element) {
-//       this._element = createElement(this.getTemplate());
-//     }
-//
-//     return this._element;
-//   }
-//
-//   removeElement() {
-//     this._element = null;
-//   }
-//
-//   setCloseButtonClickHandler(handler) {
-//     this.getElement()
-//       .querySelector(`.film-details__close-btn`)
-//       .addEventListener(`click`, handler);
-//   }
-// }
-
-export default class FilmDetails {
-  constructor(filmCard) {
-    this._filmCardDetails = filmCard;
-    this._element = null;
+export default class FilmDetails extends AbstractComponent {
+  constructor(filmCardDetails) {
+    super();
+    this._filmCardDetails = filmCardDetails;
     this._handleCloseButtonClick = this._handleCloseButtonClick.bind(this);
     this._handleDocumentKeyDown = this._handleDocumentKeyDown.bind(this);
   }
@@ -179,13 +150,6 @@ export default class FilmDetails {
     return createFilmDetailsTemplate(this._filmCardDetails);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
 
   removeElement() {
     if (this._element) {
@@ -195,12 +159,14 @@ export default class FilmDetails {
     }
   }
 
+
   setCloseButtonClickHandler(handler) {
     this._closeButtonClickHandler = handler;
     const closeButton = this.getElement().querySelector(`.film-details__close-btn`);
     closeButton.addEventListener(`click`, this._handleCloseButtonClick);
     document.addEventListener(`keydown`, this._handleDocumentKeyDown);
   }
+
 
   _handleCloseButtonClick() {
     if (this._closeButtonClickHandler) {
@@ -209,11 +175,14 @@ export default class FilmDetails {
     this.removeElement();
   }
 
+
   _handleDocumentKeyDown(evt) {
     if (evt.key === `Escape`) {
       this._handleCloseButtonClick();
     }
   }
+
+  // setCloseButtonHandler(handler) {
+  //   this.getElement().querySelector(`.film-details__close-btn`).addEventListener(`click`, handler);
+  // }
 }
-
-

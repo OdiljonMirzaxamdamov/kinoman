@@ -88,26 +88,10 @@ const filmsCommentDayItems = [
   `4 weeks ago`,
 ];
 
-
-const generateRandomArrayItem = (array) => {
-  const randomIndex = getRandomIntegerNumber(0, array.length);
-
-  return array[randomIndex];
-};
-
-const getRandomIntegerNumber = (min, max) => {
-  return min + Math.floor(Math.random() * (max - min));
-};
-
-// Функция для выбора случайных элементов из массива
-function getRandomItemFromArray(array, count) {
-  const shuffled = array.sort(() => 0.5 - Math.random()); // Перемешиваем массив
-  return shuffled.slice(0, count); // Выбираем заданное количество элементов
-}
-
+import {getRandomArrayItem, getRandomItemFromArray, getRandomIntegerNumber} from "../utils/common";
 
 const generateFilm = () => {
-  const titleAndPoster = generateRandomArrayItem(filmsTitleItems);
+  const titleAndPoster = getRandomArrayItem(filmsTitleItems);
   return {
     title: titleAndPoster,
     rating: getRandomIntegerNumber(3, 10) + (getRandomIntegerNumber(1, 9) / 10),
@@ -118,13 +102,13 @@ const generateFilm = () => {
     poster: titleAndPoster,
     description: getRandomItemFromArray(filmsDescriptionsItems, getRandomIntegerNumber(1, 5)).join(` `),
     comments: getRandomIntegerNumber(0, 5),
-    director: generateRandomArrayItem(filmsDirectorItems),
+    director: getRandomArrayItem(filmsDirectorItems),
     writers: getRandomItemFromArray(filmsWritersItems, getRandomIntegerNumber(1, 3)).join(`, `),
     actors: getRandomItemFromArray(filmsActorsItems, getRandomIntegerNumber(3, 3)).join(`, `),
-    commentEmoji: generateRandomArrayItem(filmsCommentEmojiItems),
-    commentText: generateRandomArrayItem(filmsCommentTextItems),
-    commentAuthor: generateRandomArrayItem(filmsCommentAuthorItems),
-    commentDay: generateRandomArrayItem(filmsCommentDayItems),
+    commentEmoji: getRandomArrayItem(filmsCommentEmojiItems),
+    commentText: getRandomArrayItem(filmsCommentTextItems),
+    commentAuthor: getRandomArrayItem(filmsCommentAuthorItems),
+    commentDay: getRandomArrayItem(filmsCommentDayItems),
   };
 };
 

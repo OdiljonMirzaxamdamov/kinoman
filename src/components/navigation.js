@@ -1,4 +1,5 @@
-import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component";
+
 
 const createNavigationMarkup = (navigation, isChecked) => {
   const {name, count} = navigation;
@@ -19,37 +20,13 @@ const createNavigationTemplate = (navigations) => {
 };
 
 
-export default class Navigation {
-  constructor(navigations) {
-    this._film = navigations;
-    this._element = null;
+export default class Navigation extends AbstractComponent {
+  constructor(navigation) {
+    super();
+    this._navigation = navigation;
   }
 
   getTemplate() {
-    return createNavigationTemplate(this._film);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createNavigationTemplate(this._navigation);
   }
 }
-
-
-// export const createNavigationTemplate = (navigations) => {
-//   const navigationsMarkup = navigations.map((it, i) => createNavigationMarkup(it, i === 0)).join(`\n`);
-//
-//   return `<nav class="main-navigation">
-//             <div class="main-navigation__items">
-//               ${navigationsMarkup}
-//             </div>
-//             <a href="#stats" class="main-navigation__additional">Stats</a>
-//          </nav>`;
-// };

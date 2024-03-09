@@ -1,20 +1,28 @@
-export const IMAGE_FORMAT = [`jpg`, `png`];
+export const FilmsCount = {
+  TOTAL_AMOUNT: 15,
+  LOAD_AMOUNT: 5,
+  INITIAL_AMOUNT: 5,
+  EXTRA_FILM_AMOUNT: 2,
+  NO_DATA: 0
+};
 
-export const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
+export const SortType = {
+  DEFAULT: `default`,
+  DATE: `date`,
+  RATING: `rating`,
+  COMMENTS: `comments`,
+};
 
-export const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
+export const RenderPosition = {
+  AFTERBEGIN: `afterbegin`,
+  BEFOREEND: `beforeend`,
+  AFTEREND: `afterend`
+};
 
-export const MONTH_NAME = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`,
-];
+
+export const ExtraType = {
+  TOPRATED: `TOP RATED`,
+  MOSTCOMMENTED: `MOST COMMENTED`,
+};
+
+

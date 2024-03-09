@@ -1,146 +1,175 @@
 // Функции компонентов разметки страницы (контейнер элемент и вёрстка)
-import FilmCard from "./components/film-card";
-import FilmDetails from "./components/film-details";
-import FilmDetailsComments from "./components/film-details-comments";
-import Films from "./components/films";
-import FooterStatisticsValue from "./components/footer-statistics-value";
-import Navigation from "./components/navigation";
 import Profile from "./components/profile";
-import ShowMoreButton from "./components/show-more-button";
-import Sort from "./components/sort";
-import FilmsListContainer from "./components/films-list-container";
-import FilmsList from "./components/films-list";
-import FilmsListExtra from "./components/films-list-extra";
-import NoData from "./components/no-data";
+import Navigation from "./components/navigation";
+import FilmsMainBlock from "./components/films-main-block";
+import FooterStatisticsValue from "./components/footer-statistics-value";
+import NoDataNavigation from "./components/no-data/no-data-navigation";
+import NoDataSort from "./components/no-data/no-data-sort";
+import NoDataFilms from "./components/no-data/no-data-films";
+import NoDataFooter from "./components/no-data/no-data-footer";
+import {generateNavigations, navigationActive} from "./mock/mock-navigation";
+import {generateFilms} from "./mock/mock-film-card";
+import {render} from "./utils/render";
+import {FilmsCount} from "./const";
+import FilmsMainBlockController from "./controllers/films-main-block-controller";
 
 
-import {generateNavigations, navigationActive} from "./mock/navigation";
-import {generateFilms, generateComments} from "./mock/film-card";
-import {render, RenderPosition} from "./utils.js";
-
-
-const FILM_COUNT = 0;
-const EXTRA_FILM_COUNT = 2;
-const SHOWING_FILM_COUNT_ON_START = 5;
-const SHOWING_FILM_COUNT_BY_BUTTON = 5;
-
-
-const films = generateFilms(FILM_COUNT);
-const sortedTopRatedFilms = films.slice().sort((a, b) => b.rating - a.rating);
-const sortedMostCommentedFilms = [...films].sort((a, b) => b.comments - a.comments);
+const films = generateFilms(FilmsCount.TOTAL_AMOUNT);
 const navigations = generateNavigations();
-
-
 const siteProfilElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
 const siteFooterElement = document.querySelector(`.footer`);
 const footerElement = siteFooterElement.querySelector(`.footer__statistics`);
 
 
-const filmsMainBlock = new Films();
-const filmsList = new FilmsList();
-
-
-render(siteProfilElement, new Profile().getElement());
-
+// первый блок профила
+render(siteProfilElement, new Profile());
 
 // ставим проверку если филмы отсутсвуют, то отобразиться NO DATA окно
-if (films.length === 0) {
-  render(siteMainElement, new NoData().getElementNoDataNavigation());
-  render(siteMainElement, new NoData().getElementNoDataSort());
-  render(siteMainElement, new NoData().getElementNoDataFilms());
-  render(footerElement, new NoData().getElementNoDataFooter());
-
+if (films.length === FilmsCount.NO_DATA) {
+  render(siteMainElement, new NoDataNavigation());
+  render(siteMainElement, new NoDataSort());
+  render(siteMainElement, new NoDataFilms());
+  render(footerElement, new NoDataFooter());
   throw new Error(`There are no movies in our database`);
 }
 
 
-const filmsListExtraTopRated = new FilmsListExtra(`TOP RATED`);
-const filmsListExtraMostCommented = new FilmsListExtra(`MOST COMMENTED`);
-
-
-render(siteMainElement, new Navigation(navigations).getElement());
+// второй блок навигацию
+render(siteMainElement, new Navigation(navigations));
 const navigation = document.querySelector(`.main-navigation__items`);
 navigationActive(navigation);
-render(siteMainElement, new Sort().getElement());
-render(siteMainElement, filmsMainBlock.getElement());
-render(filmsMainBlock.getElement(), filmsList.getElement());
-render(filmsMainBlock.getElement(), filmsListExtraTopRated.getElement());
-render(filmsMainBlock.getElement(), filmsListExtraMostCommented.getElement());
 
 
-// Функция для рендеринга фильмов
-const renderFilm = (container, filmCard) => {
-  const filmCardComponent = new FilmCard(filmCard);
-
-  filmCardComponent.setElementsClickHandler(() => {
-    const filmDetails = new FilmDetails(filmCard);
-
-    filmDetails.setCloseButtonClickHandler(() => {
-      filmDetails.getElement().remove();
-      filmDetails.removeElement();
-    });
-
-    render(document.body, filmDetails.getElement());
-
-    const filmDetailsCommentsTitleElement = filmDetails.getElement().querySelector(`.film-details__comments-title`);
-    const comments = generateComments(filmCard.comments);
-    render(filmDetailsCommentsTitleElement, new FilmDetailsComments(comments).getElement(), RenderPosition.AFTEREND);
-  });
-
-  render(container, filmCardComponent.getElement());
-};
-
-
-// Функция для рендеринга БЛОКА фильмов
-const renderFilmsList = (filmsBlock, filmsArray) => {
-
-  render(filmsBlock.getElement(), new FilmsListContainer().getElement());
-
-  // рендерим сами задачи для начального окна в количестве SHOWING_TASKS_COUNT_ON_START
-  const filmListContainerElement = filmsBlock.getElement().querySelector(`.films-list__container`);
-  let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
-  filmsArray.slice(0, showingFilmsCount).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
-
-
-  // рендерим кнопки "показать больше"
-  const showMoreButton = new ShowMoreButton();
-  render(filmsBlock.getElement(), showMoreButton.getElement());
-
-  // отслеживаем кнопку и рендерим ещё больше задач
-  showMoreButton.getElement().addEventListener(`click`, () => {
-    const prevTasksCount = showingFilmsCount;
-    showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
-
-    films.slice(prevTasksCount, showingFilmsCount).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
-
-    if (showingFilmsCount >= films.length) {
-      showMoreButton.getElement().remove();
-      showMoreButton.removeElement();
-    }
-  });
-};
-
-
-// Функция для рендеринга БЛОКА EXTRA фильмов
-const renderExtraFilmsList = (filmsBlock, filmsArray) => {
-  render(filmsBlock.getElement(), new FilmsListContainer().getElement());
-
-  // рендерим сами задачи для начального окна в количестве SHOWING_TASKS_COUNT_ON_START
-  const filmListContainerElement = filmsBlock.getElement().querySelector(`.films-list__container`);
-  filmsArray.slice(0, EXTRA_FILM_COUNT).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
-};
-
-
-renderFilmsList(filmsList, films);
-renderExtraFilmsList(filmsListExtraTopRated, sortedTopRatedFilms);
-renderExtraFilmsList(filmsListExtraMostCommented, sortedMostCommentedFilms);
+// четвертый основно контейнер фильмов
+const filmsMainBlock = new FilmsMainBlock();
+const filmsMainBlockController = new FilmsMainBlockController(filmsMainBlock);
+render(siteMainElement, filmsMainBlock);
+filmsMainBlockController.render(films);
 
 
 // Футер - счётчик количества фильмов сайта
-render(footerElement, new FooterStatisticsValue().getElement());
+render(footerElement, new FooterStatisticsValue());
 
 
+// 5-лекция
+// // Функции компонентов разметки страницы (контейнер элемент и вёрстка)
+// import FilmCard from "./components/film-card";
+// import FilmDetails from "./components/film-details";
+// import FilmDetailsComments from "./components/film-details-comments";
+// import ShowMoreButton from "./components/show-more-button";
+// import FilmsListContainer from "./components/films-list-container";
+// import FilmsList from "./components/films-list";
+// import FilmsListExtra from "./components/films-list-extra";
+//
+// // No-data функции
+// import NoDataNavigation from "./components/no-data/no-data-navigation";
+// import NoDataSort from "./components/no-data/no-data-sort";
+// import NoDataFilms from "./components/no-data/no-data-films";
+// import NoDataFooter from "./components/no-data/no-data-footer";
+//
+//
+// const EXTRA_FILM_COUNT = 2;
+// const SHOWING_FILM_COUNT_ON_START = 5;
+// const SHOWING_FILM_COUNT_BY_BUTTON = 5;
+//
+//
+// const sortedTopRatedFilms = films.slice().sort((a, b) => b.rating - a.rating);
+// const sortedMostCommentedFilms = [...films].sort((a, b) => b.comments - a.comments);
+//
+//
+// const filmsList = new FilmsList();
+//
+//
+// // ставим проверку если филмы отсутсвуют, то отобразиться NO DATA окно
+// if (films.length === 0) {
+//   render(siteMainElement, new NoDataNavigation());
+//   render(siteMainElement, new NoDataSort());
+//   render(siteMainElement, new NoDataFilms());
+//   render(footerElement, new NoDataFooter());
+//
+//   throw new Error(`There are no movies in our database`);
+// }
+//
+//
+// const filmsListExtraTopRated = new FilmsListExtra(`TOP RATED`);
+// const filmsListExtraMostCommented = new FilmsListExtra(`MOST COMMENTED`);
+//
+//
+// render(filmsMainBlock.getElement(), filmsList.getElement());
+// render(filmsMainBlock.getElement(), filmsListExtraTopRated.getElement());
+// render(filmsMainBlock.getElement(), filmsListExtraMostCommented.getElement());
+//
+//
+// // Функция для рендеринга фильмов
+// const renderFilm = (container, filmCard) => {
+//   const filmCardComponent = new FilmCard(filmCard);
+//
+//   filmCardComponent.setElementsClickHandler(() => {
+//     const filmDetails = new FilmDetails(filmCard);
+//
+//     filmDetails.setCloseButtonClickHandler(() => {
+//       filmDetails.getElement().remove();
+//       filmDetails.removeElement();
+//     });
+//
+//     render(document.body, filmDetails.getElement());
+//
+//     const filmDetailsCommentsTitleElement = filmDetails.getElement().querySelector(`.film-details__comments-title`);
+//     const comments = generateComments(filmCard.comments);
+//     render(filmDetailsCommentsTitleElement, new FilmDetailsComments(comments).getElement(), RenderPosition.AFTEREND);
+//   });
+//
+//   render(container, filmCardComponent.getElement());
+// };
+//
+//
+// // Функция для рендеринга БЛОКА фильмов
+// const renderFilmsList = (filmsBlock, filmsArray) => {
+//
+//   render(filmsBlock.getElement(), new FilmsListContainer().getElement());
+//
+//   // рендерим сами задачи для начального окна в количестве SHOWING_TASKS_COUNT_ON_START
+//   const filmListContainerElement = filmsBlock.getElement().querySelector(`.films-list__container`);
+//   let showingFilmsCount = SHOWING_FILM_COUNT_ON_START;
+//   filmsArray.slice(0, showingFilmsCount).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
+//
+//
+//   // рендерим кнопки "показать больше"
+//   const showMoreButton = new ShowMoreButton();
+//   render(filmsBlock.getElement(), showMoreButton.getElement());
+//
+//   // отслеживаем кнопку и рендерим ещё больше задач
+//   showMoreButton.getElement().addEventListener(`click`, () => {
+//     const prevTasksCount = showingFilmsCount;
+//     showingFilmsCount = showingFilmsCount + SHOWING_FILM_COUNT_BY_BUTTON;
+//
+//     films.slice(prevTasksCount, showingFilmsCount).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
+//
+//     if (showingFilmsCount >= films.length) {
+//       showMoreButton.getElement().remove();
+//       showMoreButton.removeElement();
+//     }
+//   });
+// };
+//
+//
+// // Функция для рендеринга БЛОКА EXTRA фильмов
+// const renderExtraFilmsList = (filmsBlock, filmsArray) => {
+//   render(filmsBlock.getElement(), new FilmsListContainer().getElement());
+//
+//   // рендерим сами задачи для начального окна в количестве SHOWING_TASKS_COUNT_ON_START
+//   const filmListContainerElement = filmsBlock.getElement().querySelector(`.films-list__container`);
+//   filmsArray.slice(0, EXTRA_FILM_COUNT).forEach((filmCard) => renderFilm(filmListContainerElement, filmCard));
+// };
+//
+//
+// renderFilmsList(filmsList, films);
+// renderExtraFilmsList(filmsListExtraTopRated, sortedTopRatedFilms);
+// renderExtraFilmsList(filmsListExtraMostCommented, sortedMostCommentedFilms);
+
+
+// 4-лекция
 // // Функции компонентов разметки страницы (контейнер элемент и вёрстка)
 // import {createPrifileTemplate} from "./components/profile";
 // import {createNavigationTemplate} from "./components/navigation";
